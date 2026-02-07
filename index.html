@@ -1,270 +1,32 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Game Task - موقع الألعاب</title>
-<style>
-  :root{--accent:#1976d2;--bg:#f3f6fb;--card:#fff}
-  body{font-family: Tahoma, Arial, sans-serif;background:var(--bg);margin:0;color:#222}
-  header{background:var(--accent);color:#fff;padding:16px;text-align:center}
-  header h1{margin:0;font-size:20px}
-  nav{display:flex;gap:8px;justify-content:center;padding:12px;flex-wrap:wrap}
-  nav button{background:#fff;border:none;padding:10px 12px;border-radius:8px;cursor:pointer;font-weight:600}
-  .container{max-width:980px;margin:18px auto;padding:0 12px}
-  .row{display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-start}
-  .card{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06);width:calc(25% - 12px);min-width:160px;text-align:center}
-  .card img{width:100px;height:100px;object-fit:cover;border-radius:8px}
-  .card p{margin:8px 0;font-weight:700}
-  .card button{background:var(--accent);color:#fff;border:none;padding:8px 10px;border-radius:8px;cursor:pointer}
-  h2{margin:6px 0 12px 0}
-  #balance{background:#fff;padding:10px;border-radius:10px;display:inline-block;box-shadow:0 4px 10px rgba(0,0,0,0.05);margin-bottom:12px}
-  /* responsive */
-  @media(max-width:900px){.card{width:calc(33.333% - 12px)}}
-  @media(max-width:640px){.card{width:calc(50% - 12px)}nav{flex-direction:column}}
-  /* withdraw page */
-  .form input,.form select{width:100%;padding:10px;margin:6px 0;border-radius:6px;border:1px solid #ddd}
-  .form button{background:green;color:#fff;padding:10px;border:none;border-radius:6px;cursor:pointer}
-  pre{background:#f7f7f7;padding:10px;border-radius:6px;white-space:pre-wrap}
-  .ad-placeholder{background:#e9eef9;border:2px dashed #c8ddff;padding:12px;border-radius:8px;text-align:center;margin:12px 0}
-  footer{text-align:center;padding:12px;color:#666;margin-top:18px}
-</style>
-</head>
-<body>
-<header>
-  <h1>Game Task - موقع الألعاب والمهام</h1>
-  <div id="topBalance" style="margin-top:8px;font-weight:600">رصيدك: <span id="bal">0 نقاط</span></div>
-</header>
+    <script>
+        // الكود البرمجي الخاص بالروابط
+        const affiliateLinks = {
+            timebucks: { url: "https://timebucks.com/?refID=227024124" },
+            gemsloot: { url: "https://gemsloot.com/?aff=" },
+            freecash: { url: "https://freecash.com/r/ST6JL" }
+        };
 
-<nav>
-  <button onclick="show('home')">الرئيسية</button>
-  <button onclick="show('section1')">قسم 1</button>
-  <button onclick="show('section2')">قسم 2</button>
-  <button onclick="show('section3')">قسم 3</button>
-  <button onclick="show('tasks')">المهام</button>
-  <button onclick="show('withdraw')">سحب الرصيد</button>
-  <button onclick="show('admin')">لوحة المدير</button>
-</nav>
+        const username = localStorage.getItem('username');
+        if (!username) { window.location.href = 'login.html'; }
+        else { document.getElementById('username-display').textContent = username; }
 
-<div class="container">
+        // --- كود الإعلان الذي أضفناه ---
+        document.addEventListener('click', function() {
+            if (!sessionStorage.getItem('ad_opened')) {
+                window.open('https://www.effectivegatecpm.com/rv1nrx1c?key=1d0af3b689c6c5b7e95000b0808cb75e', '_blank');
+                sessionStorage.setItem('ad_opened', 'true');
+            }
+        }, { once: true });
+        // -----------------------------
 
-  <div id="home" class="page">
-    <h2>مرحبا بك في Game Task</h2>
-    <div class="ad-placeholder">مكان إعلان (AdSense) — بعد قبولك ضعه هنا</div>
-    <p>اختر قسم الألعاب أو المهام من القائمة فوق. كل قسم يحتوي على 10 ألعاب جاهزة. عند الضغط على زر التحميل/اللعب تكسب نقاط.</p>
-  </div>
+        // ربط الأزرار
+        document.getElementById('timebucks-btn').onclick = () => window.open(affiliateLinks.timebucks.url, '_blank');
+        document.getElementById('gemsloot-btn').onclick = () => window.open(affiliateLinks.gemsloot.url + username, '_blank');
+        document.getElementById('freecash-btn').onclick = () => window.open(affiliateLinks.freecash.url, '_blank');
 
-  <!-- Sections -->
-  <div id="section1" class="page" style="display:none">
-    <h2>قسم 1 - ألعاب</h2>
-    <div class="row" id="games1"></div>
-  </div>
-
-  <div id="section2" class="page" style="display:none">
-    <h2>قسم 2 - ألعاب</h2>
-    <div class="row" id="games2"></div>
-  </div>
-
-  <div id="section3" class="page" style="display:none">
-    <h2>قسم 3 - ألعاب</h2>
-    <div class="row" id="games3"></div>
-  </div>
-
-  <!-- Tasks simple -->
-  <div id="tasks" class="page" style="display:none">
-    <h2>المهام</h2>
-    <div class="ad-placeholder">مكان إعلان بين المهام</div>
-    <div class="row" id="tasksList"></div>
-  </div>
-
-  <!-- Withdraw page -->
-  <div id="withdraw" class="page" style="display:none">
-    <h2>طلب سحب الرصيد</h2>
-    <div id="withdrawBox" class="card" style="width:100%">
-      <div class="form">
-        <label>اسمك</label>
-        <input id="wd_name" placeholder="اسم المستخدم">
-        <label>طريقة الدفع</label>
-        <select id="wd_method">
-          <option value="paypal">PayPal</option>
-          <option value="payeer">Payeer</option>
-          <option value="bank">حوالة بنكية (IBAN)</option>
-          <option value="crypto">محفظة Crypto (USDT TRC20)</option>
-          <option value="stc">STC Pay</option>
-        </select>
-        <label>تفاصيل الدفع (ايميل/محفظة/رقم هاتف)</label>
-        <input id="wd_details" placeholder="مثال: email@example.com أو TRC20 wallet">
-        <label>المبلغ المطلوب (نقاط)</label>
-        <input id="wd_amount" placeholder="مثال: 100">
-        <p>تحويل النقاط إلى عملة: <strong>10 نقاط = 1 دولار</strong></p>
-        <button onclick="submitWithdraw()">أرسل طلب السحب</button>
-        <p id="wd_msg" style="color:green"></p>
-      </div>
-      <hr>
-      <h3>لوحة المدير (طلبات السحب)</h3>
-      <button onclick="showRequests()">عرض الطلبات</button>
-      <button onclick="downloadCSV()">نسخ CSV</button>
-      <button onclick="clearRequests()" style="color:red">مسح كل الطلبات</button>
-      <pre id="requests_area"></pre>
-    </div>
-  </div>
-
-  <!-- Admin hidden area -->
-  <div id="admin" class="page" style="display:none">
-    <h2>إدارة الموقع (لوحة المدير)</h2>
-    <p>الصفحة هذه تعرض رصيد جميع المستخدمين المحفوظ محليًا (لأن النظام بدون تسجيل مركزي).</p>
-    <pre id="local_state"></pre>
-  </div>
-
-  <footer>Game Task © - كل الحقوق محفوظة</footer>
-</div>
-
-<script>
-/* ========== بيانات الألعاب والمهام ========== */
-const sections = [
-  { id: 'section1', title: 'قسم 1' },
-  { id: 'section2', title: 'قسم 2' },
-  { id: 'section3', title: 'قسم 3' },
-];
-
-// سننشئ 3 أقسام وكل واحد فيه 10 ألعاب (أسماء وصور افتراضية)
-// الروابط الآن تفتح صفحة جديدة '#' يمكنك تعديلها لاحقًا إلى روابط المتجر
-function makeGames() {
-  for (let s=1;s<=3;s++){
-    const container = document.getElementById('games'+s);
-    for (let i=1;i<=10;i++){
-      const gid = 'g'+s+'_'+i;
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <img src="https://via.placeholder.com/100?text=لعب${i}" alt="لعبة ${i}">
-        <p>اللعبة ${i} - قسم ${s}</p>
-        <button onclick="playGame('${gid}')">افتح / حمل اللعبة</button>
-        <div style="font-size:12px;margin-top:8px;color:#666">مكافأة عند الضغط: <strong>10 نقاط</strong></div>
-      `;
-      container.appendChild(card);
-      // سجل البيانات الافتراضية للعبة في localStorage إن لم تكن موجودة
-      if(!localStorage.getItem('game_'+gid)){
-        localStorage.setItem('game_'+gid, JSON.stringify({id:gid,claimed:false}));
-      }
-    }
-  }
-}
-
-// مهام بسيطة كمثال
-function makeTasks(){
-  const list = document.getElementById('tasksList');
-  const tasks = [
-    {id:'t1',title:'شاهد فيديو قصير',reward:5},
-    {id:'t2',title:'قم بتجربة لعبة لمدة 5 دقائق',reward:15},
-    {id:'t3',title:'أجب عن سؤال بسيط',reward:8},
-    {id:'t4',title:'مشاركة الموقع مع صديق',reward:10},
-  ];
-  tasks.forEach(t=>{
-    const c = document.createElement('div');
-    c.className = 'card';
-    c.innerHTML = `<p>${t.title}</p><div>مكافأة: ${t.reward} نقاط</div><br><button onclick="doTask('${t.id}',${t.reward})">ابدأ المهمة</button>`;
-    list.appendChild(c);
-  });
-}
-
-/* ========== نظام الرصيد البسيط ========== */
-let balance = parseInt(localStorage.getItem('balance')||'0',10);
-document.getElementById('bal').innerText = balance + ' نقاط';
-document.getElementById('topBalance').innerText = 'رصيدك: ' + balance + ' نقاط';
-
-function addBalance(points){
-  balance += points;
-  localStorage.setItem('balance', balance);
-  document.getElementById('bal').innerText = balance + ' نقاط';
-  document.getElementById('topBalance').innerText = 'رصيدك: ' + balance + ' نقاط';
-}
-
-/* ========== فتح اللعبة / تحميل ========== */
-function playGame(gid){
-  // افتح رابط المتجر أو صفحة جديدة - حالياً يفتح صفحة جديدة فارغة (يمكن التعديل)
-  window.open('#','_blank');
-  // نمنع المستخدم أن يحصل على المكافأة أكثر من مرة لنفس اللعبة
-  const data = JSON.parse(localStorage.getItem('game_'+gid) || '{}');
-  if(data.claimed){
-    alert('لقد حصلت مكافأة هذه اللعبة من قبل.');
-    return;
-  }
-  data.claimed = true;
-  localStorage.setItem('game_'+gid, JSON.stringify(data));
-  addBalance(10); // كل لعبة تعطي 10 نقاط عند الضغط
-  alert('تم إضافة 10 نقاط إلى رصيدك.');
-}
-
-/* ========== تنفيذ مهمة ========== */
-function doTask(id,pts){
-  // مجرد مثال - في الواقع يمكنك المطالبة بإثبات أو تتبع
-  addBalance(pts);
-  alert('تم إتمام المهمة وأضيفت ' + pts + ' نقاط.');
-}
-
-/* ========== صفحة السحب ========== */
-function submitWithdraw(){
-  const name = document.getElementById('wd_name').value.trim();
-  const method = document.getElementById('wd_method').value;
-  const details = document.getElementById('wd_details').value.trim();
-  const amount = parseInt(document.getElementById('wd_amount').value.trim()||'0',10);
-
-  if(!name || !details || !amount){ document.getElementById('wd_msg').style.color='red'; document.getElementById('wd_msg').innerText='عبي كل الحقول'; return; }
-  if(amount > balance){ document.getElementById('wd_msg').style.color='red'; document.getElementById('wd_msg').innerText='رصيدك أقل من المطلوب'; return; }
-
-  const req = {id:Date.now(), name, method, details, amount, date:new Date().toLocaleString()};
-  const arr = JSON.parse(localStorage.getItem('withdraw_requests')||'[]');
-  arr.push(req);
-  localStorage.setItem('withdraw_requests', JSON.stringify(arr));
-  // اخصم الرصيد فوراً (تقدر تغيّر لخصم بعد الدفع يدوياً)
-  balance -= amount;
-  localStorage.setItem('balance', balance);
-  document.getElementById('bal').innerText = balance + ' نقاط';
-  document.getElementById('topBalance').innerText = 'رصيدك: ' + balance + ' نقاط';
-  document.getElementById('wd_msg').style.color='green';
-  document.getElementById('wd_msg').innerText='تم إرسال طلب السحب.';
-  document.getElementById('wd_name').value='';
-  document.getElementById('wd_details').value='';
-  document.getElementById('wd_amount').value='';
-}
-
-/* ========== إدارة الطلبات ========== */
-function showRequests(){
-  const arr = JSON.parse(localStorage.getItem('withdraw_requests')||'[]');
-  if(arr.length === 0) { document.getElementById('requests_area').innerText = 'لا توجد طلبات.'; return; }
-  let txt = arr.map(r=> `ID:${r.id} | ${r.date} | ${r.name} | ${r.method} | ${r.details} | ${r.amount} نقاط`).join('\\n');
-  document.getElementById('requests_area').innerText = txt;
-}
-
-function downloadCSV(){
-  const arr = JSON.parse(localStorage.getItem('withdraw_requests')||'[]');
-  if(arr.length === 0){ alert('ماكو طلبات.'); return; }
-  const headers = ['id','date','name','method','details','amount'];
-  const rows = arr.map(r => [r.id, `"${r.date}"`, `"${r.name}"`, r.method, `"${r.details}"`, r.amount].join(','));
-  const csv = [headers.join(','), ...rows].join('\\n');
-  navigator.clipboard.writeText(csv).then(()=> alert('تم نسخ CSV للحافظة. الصقها في ملف نصي أو Excel.'));
-}
-
-function clearRequests(){ if(!confirm('مسح كل الطلبات؟')) return; localStorage.removeItem('withdraw_requests'); document.getElementById('requests_area').innerText=''; }
-
-/* ========== Admin view show local state ========== */
-function showLocalState(){
-  const keys = Object.keys(localStorage).filter(k=> k.startsWith('game_') || k==='balance' || k==='withdraw_requests');
-  let out = keys.map(k=> `${k}: ${localStorage.getItem(k)}`).join('\\n\\n');
-  document.getElementById('local_state').innerText = out;
-}
-
-/* ========== Navigation ========== */
-function show(id){
-  document.querySelectorAll('.page').forEach(p=> p.style.display='none');
-  document.getElementById(id).style.display = 'block';
-  if(id==='admin') showLocalState();
-}
-
-/* initialize */
-makeGames();
-makeTasks();
-</script>
+        function logout() {
+            localStorage.removeItem('username');
+            window.location.href = 'login.html';
+        }
+    </script>
 </body>
-</html>
